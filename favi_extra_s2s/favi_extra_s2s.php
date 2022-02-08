@@ -64,7 +64,7 @@ class favi_extra_s2s extends Module {
             "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "favi_extra_s2s` (
                 `id_favi` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `id_order` int(11) unsigned NOT NULL,
-                `date` datetime NOT NULL
+                `date` datetime NOT NULL,
                 `data` TEXT NULL,
                 PRIMARY KEY (`id_favi`)
             ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=utf8;"
