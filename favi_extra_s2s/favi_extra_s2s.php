@@ -67,7 +67,7 @@ class favi_extra_s2s extends Module
         $db->execute(
             "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "favi_extra_s2s` (
                 `id_favi` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                `id_order` INT(11) UNSIGNED NOT NULL,
+                `data` TEXT null,
                 PRIMARY KEY (`id_favi`)
             ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=utf8;"
         );
@@ -106,7 +106,7 @@ class favi_extra_s2s extends Module
 
         $db = Db::getInstance();
         // TODO: delete from tabl_lang
-        $tabId = $db->query("SELECT `id_tab` FROM `" . _DB_PREFIX_ . "tab` WHERE `module` = 'favi_extra_s2s'")->fetch_all();
+        $tabId = $db->query("SELECT `id_tab` FROM `" . _DB_PREFIX_ . "tab` WHERE `module` = 'favi_extra_s2s'")->fetchAll();
         foreach ($tabId as $item) {
             $db->execute(
                 "DELETE FROM `" . _DB_PREFIX_ . "tab_lang` WHERE `id_tab` = " . $item["id_tab"] . ";"
@@ -232,7 +232,7 @@ class favi_extra_s2s extends Module
     protected function getConfigFormValues()
     {
         return array(
-            'FAVI_EXTRA_S2S_ENABLED' => Configuration::get('FAVI_EXTRA_S2S_ENABLED', true),
+            'FAVI_EXTRA_S2S_ENABLED' => Configuration::get('FAVI_EXTRA_S2S_ENABLED') === "1",
             'FAVI_EXTRA_S2S_TRACKING_ID' => Configuration::get('FAVI_EXTRA_S2S_TRACKING_ID', ''),
             'FAVI_EXTRA_S2S_TOKEN' => Configuration::get('FAVI_EXTRA_S2S_TOKEN', ''),
         );
@@ -272,6 +272,78 @@ class favi_extra_s2s extends Module
 
     public function hookActionValidateOrder($orderInformation)
     {
-        /* Place your code here. */
+        $enabled = Configuration::get('FAVI_EXTRA_S2S_ENABLED') === "1";
+        $trackingID = Configuration::get('FAVI_EXTRA_S2S_TRACKING_ID', '');
+        if ($enabled && $trackingID) {
+            $this->createFaviOrder($orderInformation, $trackingID);
+        }
+    }
+
+    private function createFaviOrder($orderInformation, $trackingId) {
+        $body = array(
+            "orderId" => $orderInformation["order"]->id,
+            "customer" => array(
+                "email" => $orderInformation["customer"]->email,
+                "name" => $orderInformation["customer"]->firstname . ' ' . $orderInformation["customer"]->lastname
+            )
+        );
+        // products
+        foreach ($orderInformation["order"]->product_list as $item) {
+            $body["orderItems"][] = array(
+                "product" => array(
+                    "id" => $item["id_product"],
+                    "name" => $item["name"]
+                )
+            );
+        }
+        $this->call('/tracking/' . $trackingId . '/orders', $body);
+    }
+
+    private function call($url, $body) {
+        $key = Configuration::get('FAVI_EXTRA_S2S_TOKEN', '');
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL,'https://partner-events.favi.cz/api/v1' . $url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($body) );
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "X-Favi-Partner-Events-Server-Side-Token: $key",
+            "Content-Type:application/json"
+        ));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $serverResponse = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $errorCode = curl_errno($ch);
+
+        curl_close ($ch);
+
+        switch ($httpCode) {
+            case 400:
+                // Bad request
+            case 422:
+                // Unprocessable Entity
+                break;
+            case 200:
+            case 201:
+                break;
+        }
+
+        $dataToLog = array(
+            "httpCode" => $httpCode,
+            "request" => $body,
+            "response" => $serverResponse,
+            "errorCode" => $errorCode
+        );
+        $this->saveLog($dataToLog);
+    }
+
+    private function saveLog($data) {
+        file_put_contents('favi.log', json_encode($data) . "\n", FILE_APPEND);
+        /*
+        $db = Db::getInstance();
+        $jsonData = json_encode($data);
+        $db->insert(_DB_PREFIX_ . "favi_extra_s2s", array(
+            'data' => pSQL($jsonData)
+        ));/**/
     }
 }
