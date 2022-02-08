@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>favi_extra_s2s</name>
+	<displayName><![CDATA[FAVI extra]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[FAVI Partner Events Tracking]]></description>
+	<author><![CDATA[Roman Pospíšilík]]></author>
+	<tab><![CDATA[administration]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+</module>
