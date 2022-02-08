@@ -24,25 +24,11 @@
 *}
 
 <div class="panel">
-	<h3><i class="icon icon-credit-card"></i> {l s='FAVI extra' mod='favi_extra_s2s'}</h3>
-	<p>
-		<strong>{l s='Here is my new generic module!' mod='favi_extra_s2s'}</strong><br />
-		{l s='Thanks to PrestaShop, now I have a great module.' mod='favi_extra_s2s'}<br />
-		{l s='I can configure it using the following configuration form.' mod='favi_extra_s2s'}
-	</p>
-	<br />
-	<p>
-		{l s='This module will boost your sales!' mod='favi_extra_s2s'}
-	</p>
-</div>
-
-<div class="panel">
 	<h3><i class="icon icon-tags"></i> {l s='Documentation' mod='favi_extra_s2s'}</h3>
 	<p>
-		&raquo; {l s='You can get a PDF documentation to configure this module' mod='favi_extra_s2s'} :
+		&raquo; {l s='Documentation is available on GitHub' mod='favi_extra_s2s'} :
 		<ul>
-			<li><a href="#" target="_blank">{l s='English' mod='favi_extra_s2s'}</a></li>
-			<li><a href="#" target="_blank">{l s='French' mod='favi_extra_s2s'}</a></li>
+			<li><a href="https://github.com/Lamin-cz/favi-extra-prestashop" target="_blank">{l s='GitHub.com' mod='favi_extra_s2s'}</a></li>
 		</ul>
 	</p>
 </div>
