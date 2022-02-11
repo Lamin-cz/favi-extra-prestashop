@@ -3,8 +3,12 @@
 FAVI Partner Events Tracking for Prestashop 1.6
 
 <p>
-    <img src="https://img.shields.io/github/v/tag/Lamin-cz/favi-extra-prestashop?include_prereleases&style=flat-square" alt="Latest release" />
-    <img src="https://img.shields.io/github/issues/Lamin-cz/favi-extra-prestashop?style=flat-square" alt="Issues" />
+    <a href="https://github.com/Lamin-cz/favi-extra-prestashop/releases/tag/FEPv1.0.0">
+        <img src="https://img.shields.io/github/v/tag/Lamin-cz/favi-extra-prestashop?include_prereleases&style=flat-square" alt="Latest release" />
+    </a>
+    <a href="https://github.com/Lamin-cz/favi-extra-prestashop/issues">
+        <img src="https://img.shields.io/github/issues/Lamin-cz/favi-extra-prestashop?style=flat-square" alt="Issues" />
+    </a>
 </p>
 
 ## After successfully installation you can fill your setting:
